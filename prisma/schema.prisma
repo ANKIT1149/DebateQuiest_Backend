@@ -15,13 +15,17 @@ model User {
   username String  @unique @db.VarChar(50)
   email    String  @unique @db.VarChar(255)
   password String? @db.VarChar(255)
+  grade    String
   imageUrl String?
   quiz_data_result quiz_result[]
+  user_progress_report user_progress[]
 }
 
 model quizzes {
   id             Int      @id @default(autoincrement())
   title          String
+  quizId         String
+  grade          String
   level          String
   question       String
   options        Json
@@ -32,7 +36,7 @@ model quizzes {
 }
 
 model quiz_result {
- id          String        @id @default(uuid())
+  id          String        @id @default(uuid())
   userId         String
   correct_answer   Int
   Wrong_Answer     Int
@@ -41,7 +45,20 @@ model quiz_result {
   Total_Marks      Int
   score           Int
   percentage     Int
+  quizId         String
   created_at     DateTime @default(now())
   updated_at     DateTime @updatedAt
   user          User     @relation(fields: [userId], references: [clerk_id])
+}
+
+model user_progress{
+   id          String        @id @default(uuid())
+   userId         String
+   grade        String
+   Exp           Int
+   Level         Int
+   Badges        Json
+   Total_score   Int
+    user          User     @relation(fields: [userId], references: [clerk_id])
+
 }

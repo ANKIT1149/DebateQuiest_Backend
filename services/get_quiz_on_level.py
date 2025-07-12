@@ -1,6 +1,6 @@
 from prisma import Prisma
 
-async def get_quiz_on_level(level: str):
+async def get_quiz_on_level(quizId: str):
     try:
         prisma = Prisma()
         await prisma.connect()
@@ -8,7 +8,7 @@ async def get_quiz_on_level(level: str):
         print(f"Prisma connected Successfully")
 
         quizData = await prisma.quizzes.find_many(
-            where={"level": level},
+            where={"quizId": quizId},
             take=10
         )
 

@@ -16,10 +16,10 @@ async def submit_quiz_and_verify_results(request: SubmitAnswerModel):
             return {"message": "User not exsist", "status": 403}
 
         print(
-            f"level: {request.level}, userID: {request.userId} answer: {request.answer}"
+            f"level: {request.quizId}, userID: {request.userId} answer: {request.answer}"
         )
         quizData = await prisma.quizzes.find_many(
-            where={"level": request.level},
+            where={"quizId": request.quizId},
         )
 
         print(f"quiz data: {quizData}")
@@ -82,6 +82,7 @@ async def submit_quiz_and_verify_results(request: SubmitAnswerModel):
                     "Total_Marks": total_marks,
                     "score": score,
                     "percentage": percentage,
+                    "quizId": request.quizId
                 }
             ]
         )

@@ -6,9 +6,10 @@ class Answer(BaseModel):
     a: str
 
 class SubmitAnswerModel(BaseModel):
-    level: str
+    quizId: str
     answer: List[Answer]
     userId: str
+    level: str
 
 class SubmitAnswerResponse(BaseModel):
     score: int

@@ -22,6 +22,7 @@ async def register_userdata(user: RegisterModel):
                 "email": user.email,
                 "password": user.password,
                 "imageUrl": user.imageUrl,
+                "grade": user.grade
             }
         )
         return {

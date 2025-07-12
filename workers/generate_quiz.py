@@ -16,14 +16,16 @@ async def openai_client():
         await prisma.connect()
 
         prompt = """
-           Generate 10 expert-level debate quiz questions. Each question should:
+           Generate 10 expert-level debate quiz questions for grade 10 to 12 class Students. Each question should:
            - Have a title (e.g., "Fallacy Basics").
            - Include a question text.
            - Provide 4 multiple-choice options (label as A, B, C, D).
            - Specify the correct answer (e.g., "A").
            - Include a brief explanation.
            - Set level as "Expert".
-           Return the output as a JSON array of objects with fields: title, question, options, correct_answer, explanation, level.
+           -Generate a quizId same for all question and ensure quizId is in form of uuid not normal
+           -Also add the grade for which grade this for
+           Return the output as a JSON array of objects with fields: title, question, options, correct_answer, explanation, level, grade, quizId.
            Ensure the response is valid JSON with no additional text.
            """
 
@@ -56,6 +58,8 @@ async def openai_client():
                     "correct_answer": quiz["correct_answer"],
                     "explanation": quiz["explanation"],
                     "level": quiz["level"],
+                    "quizId": quiz["quizId"],
+                    "grade": quiz["grade"]
                 }
             )
 
