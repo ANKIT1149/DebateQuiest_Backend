@@ -5,3 +5,5 @@ pydantic-core==2.16.1
 uvicorn==0.30.6
 fastapi==0.115.0
 openai==1.47.1
+psycopg2==2.9.10
+psycopg2-binary==2.9.10

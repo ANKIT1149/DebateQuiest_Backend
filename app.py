@@ -11,6 +11,8 @@ from services.verify_quiz_answer import submit_quiz_and_verify_results
 from services.check_user_id import check_user_id
 from services.calculate_quiz import calculate_quiz_and_score
 from models.GetQuizesModel import GetQuizes
+import os
+import uvicorn
 
 app = FastAPI()
 
@@ -72,3 +74,7 @@ async def calculating_score(request: UserIdModel):
     if result["status"] == 200:
         return {"message": result["message"], "data": result["data"]}
     raise HTTPException(status_code=result["status"], detail=result["message"])
+
+if __name__ == "__main__":
+    port = int(os.environ.get("PORT", 10000))
+    uvicorn.run(app, host="0.0.0.0", port=port)
