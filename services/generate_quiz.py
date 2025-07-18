@@ -4,19 +4,21 @@ import openai
 from prisma import Prisma
 import json
 
+from models.PromptGenerateModel import PromptGenerateModel
+
 load_dotenv(dotenv_path=".env")
 
 OpenAI_API_KEY=os.getenv("OPENAI_API_KEY")
 openai.api_key = OpenAI_API_KEY
 
-async def openai_client():
+async def openai_client(model: PromptGenerateModel):
     try:
 
         prisma = Prisma()
         await prisma.connect()
 
-        prompt = """
-           Generate 10 expert-level debate quiz questions for grade 10 to 12 class Students. Each question should:
+        prompt = f"""
+           Generate 10 {model.level}-level debate quiz questions on topic {model.title} for grade {model.grade} class Students. Each question should:
            - Have a title (e.g., "Fallacy Basics").
            - Include a question text.
            - Provide 4 multiple-choice options (label as A, B, C, D).
@@ -24,15 +26,14 @@ async def openai_client():
            - Include a brief explanation.
            - Set level as "Expert".
            -Generate a quizId same for all question and ensure quizId is in form of uuid not normal
-           -Also add the grade for which grade this for
+           -Also add the grade, remember grade value is {model.grade} exact same that you recieve not any change
            Return the output as a JSON array of objects with fields: title, question, options, correct_answer, explanation, level, grade, quizId.
            Ensure the response is valid JSON with no additional text.
            """
 
         response = openai.chat.completions.create(
-            model="gpt-3.5-turbo",
+            model="gpt-4",
             messages=[{"role": "user", "content": prompt}],
-            max_tokens=2000,
         )
 
         raw_response = response.choices[0].message.content.strip()
@@ -66,12 +67,8 @@ async def openai_client():
         await prisma.quizzes.create_many(
                 data=formatted_Data
             )
-        print(f"Quiz generated Successfully and saved {len(formatted_Data)} quizzess")
+        return {"message": "Quiz Generated Successfully", "status": 200, "data": formatted_Data}
     except Exception as e:
         print(f"Error: {str(e)}")
     finally:
         await prisma.disconnect()
-
-if __name__ == "__main__":
-    import asyncio
-    asyncio.run(openai_client())

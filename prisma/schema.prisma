@@ -19,6 +19,9 @@ model User {
   imageUrl String?
   quiz_data_result quiz_result[]
   user_progress_report user_progress[]
+  bookmark      bookmark_quiz[]
+  debatePoint   DebateSession[]
+  companionData   companion_create[]
 }
 
 model quizzes {
@@ -58,7 +61,63 @@ model user_progress{
    Exp           Int
    Level         Int
    Badges        Json
-   Total_score   Int
-    user          User     @relation(fields: [userId], references: [clerk_id])
+   user          User     @relation(fields: [userId], references: [clerk_id])
+   created_at     DateTime @default(now())
+  updated_at     DateTime @updatedAt
 
+}
+
+model bookmark_quiz{
+  id          String        @id @default(uuid())
+   userId         String
+   quizId        String
+   level         String
+   user          User     @relation(fields: [userId], references: [clerk_id])
+}
+
+model DebateSession {
+  id         String    @id @default(uuid())
+  topic      String
+  duration   Int       // in minutes
+  startTime  DateTime  @default(now())
+  endTime    DateTime?
+  user       User      @relation(fields: [userId], references: [clerk_id])
+  userId     String
+  messages   Message[]
+  winner     String?
+  feedback   Json?
+  createdAt    DateTime       @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Message {
+  id           String         @id @default(uuid())
+  session      DebateSession  @relation(fields: [sessionId], references: [id])
+  sessionId    String
+  role         String         // 'user' or 'assistant'
+  content      String
+  createdAt    DateTime       @default(now())
+}
+
+model companion_create{
+   id          String   @id @default(uuid())
+   userId      String
+   topic       String
+   level       String
+   duration    String
+   voice       String
+   tone        String
+   timestamp   DateTime @default(now())
+   created_at  DateTime @default(now())
+   interactions Interaction[] 
+   user        User     @relation(fields: [userId], references: [clerk_id])
+}
+
+model Interaction { 
+  id String @id @default(uuid())
+  companionId String 
+  userInput String 
+  companionResponse String 
+  createdAt DateTime @default(now()) 
+  companion companion_create @relation(fields: [companionId], references: [id])
 }

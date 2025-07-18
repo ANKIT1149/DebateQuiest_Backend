@@ -22,7 +22,7 @@ async def calculate_quiz_and_score(request: UserIdModel):
         total_score = sum(quiz.score for quiz in quizdata)
         total_marks = sum(quiz.Total_Marks for quiz in quizdata)
         taken_quiz = len(quizdata)
-        percentage = (total_score / total_marks) * 100
+        percentage = round((total_score / total_marks) * 100, 2)
 
         data = {
             "userId": request.userId,

@@ -1,6 +1,7 @@
 from fastapi import HTTPException
 from prisma import Prisma
 from models.SubmitAnswer import SubmitAnswerModel
+from services.update_progress_reports import update_progress_report
 
 
 async def submit_quiz_and_verify_results(request: SubmitAnswerModel):
@@ -71,6 +72,10 @@ async def submit_quiz_and_verify_results(request: SubmitAnswerModel):
 
         percentage = (score / total_marks) * 100 if total_marks > 0 else 0
 
+        progress_report = await update_progress_report(request.userId, request.quizId, score, request.level)
+        if "status" in progress_report and progress_report["status"] >= 400:
+            return progress_report
+
         submitting_quizzes =  await prisma.quiz_result.create_many(
             data=[
                 {
@@ -96,7 +101,8 @@ async def submit_quiz_and_verify_results(request: SubmitAnswerModel):
             "results": results,
             "userId": request.userId,
             "submittingQuizzes": submitting_quizzes,
-            "answer": request.answer
+            "answer": request.answer,
+            "level": progress_report.get("data", {}).get("Level", "N/A"),
         }
 
         return {
