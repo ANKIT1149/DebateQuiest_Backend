@@ -1,0 +1,123 @@
+generator client {
+  provider             = "prisma-client-py"
+  interface            = "asyncio"
+  recursive_type_depth = "-1"
+  output               = "./prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id                   String             @id @default(uuid())
+  clerk_id             String             @unique
+  username             String             @unique @db.VarChar(50)
+  email                String             @unique @db.VarChar(255)
+  password             String?            @db.VarChar(255)
+  grade                String
+  imageUrl             String?
+  quiz_data_result     quiz_result[]
+  user_progress_report user_progress[]
+  bookmark             bookmark_quiz[]
+  debatePoint          DebateSession[]
+  companionData        companion_create[]
+}
+
+model quizzes {
+  id             Int      @id @default(autoincrement())
+  title          String
+  quizId         String
+  grade          String
+  level          String
+  question       String
+  options        Json
+  correct_answer String
+  explanation    String
+  created_at     DateTime @default(now())
+  updated_at     DateTime @updatedAt
+}
+
+model quiz_result {
+  id             String   @id @default(uuid())
+  userId         String
+  correct_answer Int
+  Wrong_Answer   Int
+  Total_question Int
+  level          String
+  Total_Marks    Int
+  score          Int
+  percentage     Int
+  quizId         String
+  created_at     DateTime @default(now())
+  updated_at     DateTime @updatedAt
+  user           User     @relation(fields: [userId], references: [clerk_id])
+}
+
+model user_progress {
+  id         String   @id @default(uuid())
+  userId     String
+  grade      String
+  Exp        Int
+  Level      Int
+  Badges     Json
+  user       User     @relation(fields: [userId], references: [clerk_id])
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+}
+
+model bookmark_quiz {
+  id     String @id @default(uuid())
+  userId String
+  quizId String
+  level  String
+  user   User   @relation(fields: [userId], references: [clerk_id])
+}
+
+model DebateSession {
+  id        String    @id @default(uuid())
+  topic     String
+  duration  Int // in minutes
+  startTime DateTime  @default(now())
+  endTime   DateTime?
+  user      User      @relation(fields: [userId], references: [clerk_id])
+  userId    String
+  messages  Message[]
+  winner    String?
+  feedback  Json?
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+}
+
+model Message {
+  id        String        @id @default(uuid())
+  session   DebateSession @relation(fields: [sessionId], references: [id])
+  sessionId String
+  role      String // 'user' or 'assistant'
+  content   String
+  createdAt DateTime      @default(now())
+}
+
+model companion_create {
+  id           String        @id @default(uuid())
+  userId       String
+  topic        String
+  level        String
+  duration     String
+  voice        String
+  tone         String
+  timestamp    DateTime      @default(now())
+  created_at   DateTime      @default(now())
+  interactions Interaction[]
+  user         User          @relation(fields: [userId], references: [clerk_id])
+}
+
+model Interaction {
+  id                String           @id @default(uuid())
+  companionId       String
+  userInput         String
+  companionResponse String
+  createdAt         DateTime         @default(now())
+  companion         companion_create @relation(fields: [companionId], references: [id])
+}
