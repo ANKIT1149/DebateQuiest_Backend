@@ -50,6 +50,11 @@ async def root():
     return {"message": "Welcome to DebateQuest Backend"}
 
 
+@app.head("/")
+async def head_root():
+    return {}
+
+
 @app.post("/register")
 async def register_user(User: RegisterModel):
     result = await register_userdata(User)
