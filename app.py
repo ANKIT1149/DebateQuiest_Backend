@@ -32,6 +32,8 @@ from services.get_level_and_exp import get_level_and_exp
 from services.leaderboard_for_quiz import get_leaderboard_for_quiz
 from models.PromptGenerateModel import PromptGenerateModel
 from services.generate_quiz import openai_client
+import openai
+import os
 
 app = FastAPI()
 
@@ -194,3 +196,13 @@ async def end_debate_with_ai(session_id: str):
     if result["status"] == 200:
         return {"message": result["message"], "data": result["data"]}
     raise HTTPException(status_code=result["status"], detail=result["message"])
+
+
+@app.get("/test-openai")
+async def test_openai():
+    openai.api_key = os.getenv("OPENAI_API_KEY")
+    response = openai.chat.completions.create(
+        model="gpt-4",
+        messages=[{"role": "user", "content": "Hello, world!"}]
+    )
+    return {"result": response.choices[0].message.content}
