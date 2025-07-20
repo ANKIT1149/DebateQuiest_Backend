@@ -4,8 +4,7 @@ from prisma import Prisma
 async def get_bookmarked_quiz(request: UserIdModel):
     try:
         prisma = Prisma()
-        if not prisma.is_connected:
-            await prisma.connect()
+        await prisma.connect()
 
         exsistingUser = await prisma.user.find_unique(
             where={

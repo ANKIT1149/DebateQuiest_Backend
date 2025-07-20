@@ -16,8 +16,7 @@ async def openai_client(model: PromptGenerateModel):
     try:
 
         prisma = Prisma()
-        if not prisma.is_connected:
-            await prisma.connect()
+        await prisma.connect()
 
         prompt = f"""
            Generate 10 {model.level}-level debate quiz questions on topic {model.title} for grade {model.grade} class Students. Each question should:

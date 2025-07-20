@@ -8,8 +8,7 @@ async def start_debate(
 ):
     try:
         prisma = Prisma()
-        if not prisma.is_connected:
-            await prisma.connect()
+        await prisma.connect()
 
         session = await prisma.debatesession.create(
             data={"topic": request.topic, "duration": request.duration, "userId": request.user_id}

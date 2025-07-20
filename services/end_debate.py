@@ -7,8 +7,7 @@ from prisma import Json
 async def end_debate(session_id: str):
     try:
         prisma = Prisma()
-        if not prisma.is_connected:
-            await prisma.connect()
+        await prisma.connect()
 
         messages = await prisma.message.find_many(
             where={"sessionId": session_id},

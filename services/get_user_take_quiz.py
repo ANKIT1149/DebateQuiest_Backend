@@ -5,8 +5,7 @@ from prisma import Prisma
 async def get_user_taken_quiz(request: UserIdModel):
     try:
         prisma = Prisma()
-        if not prisma.is_connected:
-            await prisma.connect()
+        await prisma.connect()
 
         exsistingUser = await prisma.user.find_unique(
             where={"clerk_id": request.userId}

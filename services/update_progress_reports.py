@@ -10,8 +10,7 @@ BADGES = [
 async def update_progress_report(userId: str, quizId: str, score: int, level: str):
     try:
         prisma = Prisma()
-        if not prisma.is_connected:
-            await prisma.connect()
+        await prisma.connect()
 
         progress_user = await prisma.user.find_unique(
             where={"clerk_id": userId}

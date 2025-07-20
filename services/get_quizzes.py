@@ -4,8 +4,7 @@ from models.GetQuizesModel import GetQuizes
 async def get_quizzes(request: GetQuizes):
     try:
         prisma = Prisma()
-        if not prisma.is_connected:
-            await prisma.connect()
+        await prisma.connect()
 
         print(f"Prisma connected SuccessFully")
 

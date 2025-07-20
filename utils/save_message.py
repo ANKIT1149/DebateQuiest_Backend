@@ -3,8 +3,7 @@ from prisma import Prisma
 async def save_message(session_id: str, role: str, content: str):
     try:
         prisma = Prisma()
-        if not prisma.is_connected:
-            await prisma.connect()
+        await prisma.connect()
 
         await prisma.message.create(
             data={

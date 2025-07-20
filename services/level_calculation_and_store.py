@@ -5,8 +5,7 @@ import json
 async def store_level_and_rewards(request: ProgressModel):
     try:
         prisma = Prisma()
-        if not prisma.is_connected:
-            await prisma.connect()
+        await prisma.connect()
 
         exsistingUser = await prisma.user.find_unique(
             where={

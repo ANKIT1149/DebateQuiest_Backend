@@ -3,8 +3,7 @@ from prisma import Prisma
 async def get_quiz_on_level(quizId: str):
     try:
         prisma = Prisma()
-        if not prisma.is_connected:
-            await prisma.connect()
+        await prisma.connect()
 
         print(f"Prisma connected Successfully")
 

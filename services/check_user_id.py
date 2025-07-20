@@ -4,8 +4,7 @@ from models.UserIdModel import UserIdModel
 async def check_user_id(request: UserIdModel):
     try:
         prisma = Prisma()
-        if not prisma.is_connected:
-            await prisma.connect()
+        await prisma.connect()
 
         userId = await prisma.user.find_first(
                where={"clerk_id": request.userId}

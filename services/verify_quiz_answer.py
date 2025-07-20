@@ -7,9 +7,8 @@ from services.update_progress_reports import update_progress_report
 async def submit_quiz_and_verify_results(request: SubmitAnswerModel):
     try:
         prisma = Prisma()
-        if not prisma.is_connected:
-            await prisma.connect()
-            
+        await prisma.connect()
+
         print(f"Prisma connected Successfully")
 
         exsistuser = await prisma.user.find_first(where={"clerk_id": request.userId})
