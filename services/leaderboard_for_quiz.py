@@ -4,8 +4,9 @@ from prisma import Prisma
 
 async def get_leaderboard_for_quiz(limit: int = 10) -> List[Dict[str, any]]:
     try:
-        prisma =  Prisma()
-        await prisma.connect()
+        prisma = Prisma()
+        if not prisma.is_connected:
+            await prisma.connect()
 
         quiz_result = await prisma.quiz_result.find_many(
             include={"user": True}

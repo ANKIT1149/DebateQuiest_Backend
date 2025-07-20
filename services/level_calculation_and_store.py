@@ -5,7 +5,8 @@ import json
 async def store_level_and_rewards(request: ProgressModel):
     try:
         prisma = Prisma()
-        await prisma.connect()
+        if not prisma.is_connected:
+            await prisma.connect()
 
         exsistingUser = await prisma.user.find_unique(
             where={
@@ -35,6 +36,3 @@ async def store_level_and_rewards(request: ProgressModel):
     except Exception as e:
         print(f"Error in storing level: {str(e)}")
         return
-    
-    finally:
-        await prisma.disconnect()

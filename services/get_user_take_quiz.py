@@ -5,7 +5,8 @@ from prisma import Prisma
 async def get_user_taken_quiz(request: UserIdModel):
     try:
         prisma = Prisma()
-        await prisma.connect()
+        if not prisma.is_connected:
+            await prisma.connect()
 
         exsistingUser = await prisma.user.find_unique(
             where={"clerk_id": request.userId}
@@ -46,5 +47,3 @@ async def get_user_taken_quiz(request: UserIdModel):
     except Exception as e:
         print(f"Error in finding quiz: {str(e)}")
         return
-    finally:
-        await prisma.disconnect()

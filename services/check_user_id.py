@@ -4,7 +4,8 @@ from models.UserIdModel import UserIdModel
 async def check_user_id(request: UserIdModel):
     try:
         prisma = Prisma()
-        await prisma.connect()
+        if not prisma.is_connected:
+            await prisma.connect()
 
         userId = await prisma.user.find_first(
                where={"clerk_id": request.userId}
@@ -17,5 +18,3 @@ async def check_user_id(request: UserIdModel):
     except Exception as error:
         print(f"Error checking user ID: {error}")
         return {"message": "Internal server error", "status": 500}
-    finally:
-        await prisma.disconnect()

@@ -3,7 +3,8 @@ from prisma import Prisma
 async def get_quiz_on_level(quizId: str):
     try:
         prisma = Prisma()
-        await prisma.connect()
+        if not prisma.is_connected:
+            await prisma.connect()
 
         print(f"Prisma connected Successfully")
 
@@ -14,7 +15,7 @@ async def get_quiz_on_level(quizId: str):
 
         if not quizData:
             return {"message": "No quizzes found for the specified level", "status": 404}
-        
+
         return {
             "message": "Quizzes retrieved successfully",
             "status": 200,

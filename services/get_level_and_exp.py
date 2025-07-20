@@ -4,7 +4,8 @@ from models.UserIdModel import UserIdModel
 async def get_level_and_exp(request: UserIdModel):
     try:
         prisma = Prisma()
-        await prisma.connect()
+        if not prisma.is_connected:
+            await prisma.connect()
 
         exsistingUser = await prisma.user.find_unique(
             where={"clerk_id": request.userId}
@@ -26,5 +27,3 @@ async def get_level_and_exp(request: UserIdModel):
     except Exception as e:
         print(f"Error in getting progress report, {str(e)}")
         return
-    finally:
-        await prisma.disconnect()

@@ -5,7 +5,8 @@ from models.BookmarkModel import BookMarkModel
 async def remove_bookmark_quiz(request: BookMarkModel):
     try:
         prisma = Prisma()
-        await prisma.connect()
+        if not prisma.is_connected:
+            await prisma.connect()
 
         exsistingUser = await prisma.user.find_unique(
             where={"clerk_id": request.userId}
@@ -13,7 +14,7 @@ async def remove_bookmark_quiz(request: BookMarkModel):
 
         if not exsistingUser:
             return {"message": "User not exsist", "status": 403}
-        
+
         checkBookmark = await prisma.bookmark_quiz.find_first(
             where={"quizId": request.quizId}
         )
@@ -26,5 +27,3 @@ async def remove_bookmark_quiz(request: BookMarkModel):
     except Exception as e:
         print(f"Error in storing bookmark quiz: {str(e)}")
         return
-    finally:
-        await prisma.disconnect()

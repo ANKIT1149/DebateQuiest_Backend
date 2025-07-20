@@ -10,7 +10,8 @@ BADGES = [
 async def update_progress_report(userId: str, quizId: str, score: int, level: str):
     try:
         prisma = Prisma()
-        await prisma.connect()
+        if not prisma.is_connected:
+            await prisma.connect()
 
         progress_user = await prisma.user.find_unique(
             where={"clerk_id": userId}
@@ -18,7 +19,7 @@ async def update_progress_report(userId: str, quizId: str, score: int, level: st
 
         if not progress_user:
             return {"message": "User not exist", "status": 403}
-        
+
         progress_field = await prisma.user_progress.find_first(
             where={"userId": userId}
         )
@@ -45,7 +46,7 @@ async def update_progress_report(userId: str, quizId: str, score: int, level: st
                 newExp = progress_field.Exp + (score * 6)
         else:
             return {"message": "Invalid level", "status": 400}
-        
+
         new_level = progress_field.Level
         current_badges = json.loads(progress_field.Badges) if progress_field.Badges else []
         new_badges = current_badges.copy()
@@ -70,5 +71,3 @@ async def update_progress_report(userId: str, quizId: str, score: int, level: st
     except Exception as e:
         print(f"error in updating: {str(e)}")
         return {"message": "Error updating progress", "status": 500}
-    finally:
-        await prisma.disconnect()

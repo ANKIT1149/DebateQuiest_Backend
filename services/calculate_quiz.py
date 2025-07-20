@@ -5,7 +5,8 @@ from models.UserIdModel import UserIdModel
 async def calculate_quiz_and_score(request: UserIdModel):
     try:
         prisma = Prisma()
-        await prisma.connect()
+        if not prisma.is_connected:
+            await prisma.connect()
 
         print(f"Prisma connected Successfully")
 
@@ -35,5 +36,3 @@ async def calculate_quiz_and_score(request: UserIdModel):
         return {"message": "Quiz Results  exsist", "status": 200, "data": data}
     except Exception as e:
         print(f"Error in getting score: {str(e)}")
-    finally:
-        await prisma.disconnect()

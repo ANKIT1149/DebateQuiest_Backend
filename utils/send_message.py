@@ -6,7 +6,8 @@ from utils.anylyze_debate import get_ai_reply
 async def send_message(request:SendMessageModel):
     try:
         prisma = Prisma()
-        await prisma.connect()
+        if not prisma.is_connected:
+            await prisma.connect()
 
         session = await prisma.debatesession.find_unique(where={"id": request.session_id})
         if not session:

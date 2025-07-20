@@ -8,14 +8,16 @@ from models.PromptGenerateModel import PromptGenerateModel
 
 load_dotenv(dotenv_path=".env")
 
-OpenAI_API_KEY=os.getenv("OPENAI_API_KEY")
+OpenAI_API_KEY = os.getenv("OPENAI_API_KEY")
 openai.api_key = OpenAI_API_KEY
+
 
 async def openai_client(model: PromptGenerateModel):
     try:
 
         prisma = Prisma()
-        await prisma.connect()
+        if not prisma.is_connected:
+            await prisma.connect()
 
         prompt = f"""
            Generate 10 {model.level}-level debate quiz questions on topic {model.title} for grade {model.grade} class Students. Each question should:
@@ -48,7 +50,7 @@ async def openai_client(model: PromptGenerateModel):
         if not isinstance(quiz_data, list):
             raise ValueError("Response is not valid JSON Array")
 
-        formatted_Data=[]
+        formatted_Data = []
         for quiz in quiz_data:
             option_list = [f"{key}) {value}" for key, value in quiz["options"].items()]
             formatted_Data.append(
@@ -60,15 +62,15 @@ async def openai_client(model: PromptGenerateModel):
                     "explanation": quiz["explanation"],
                     "level": quiz["level"],
                     "quizId": quiz["quizId"],
-                    "grade": quiz["grade"]
+                    "grade": quiz["grade"],
                 }
             )
 
-        await prisma.quizzes.create_many(
-                data=formatted_Data
-            )
-        return {"message": "Quiz Generated Successfully", "status": 200, "data": formatted_Data}
+        await prisma.quizzes.create_many(data=formatted_Data)
+        return {
+            "message": "Quiz Generated Successfully",
+            "status": 200,
+            "data": formatted_Data,
+        }
     except Exception as e:
         print(f"Error: {str(e)}")
-    finally:
-        await prisma.disconnect()

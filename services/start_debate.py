@@ -8,7 +8,8 @@ async def start_debate(
 ):
     try:
         prisma = Prisma()
-        await prisma.connect()
+        if not prisma.is_connected:
+            await prisma.connect()
 
         session = await prisma.debatesession.create(
             data={"topic": request.topic, "duration": request.duration, "userId": request.user_id}
@@ -36,5 +37,3 @@ async def start_debate(
     except Exception as e:
         print(f"Error in starting debate: {str(e)}")
         return
-    finally:
-        await prisma.disconnect()

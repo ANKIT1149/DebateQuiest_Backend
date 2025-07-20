@@ -7,8 +7,9 @@ from services.update_progress_reports import update_progress_report
 async def submit_quiz_and_verify_results(request: SubmitAnswerModel):
     try:
         prisma = Prisma()
-        await prisma.connect()
-
+        if not prisma.is_connected:
+            await prisma.connect()
+            
         print(f"Prisma connected Successfully")
 
         exsistuser = await prisma.user.find_first(where={"clerk_id": request.userId})
@@ -113,6 +114,3 @@ async def submit_quiz_and_verify_results(request: SubmitAnswerModel):
     except Exception as error:
         print(f"Error retrieving quizzes: {error}")
         return {"message": f"Failed to retrieve quizzes: {error}", "status": 500}
-    finally:
-        await prisma.disconnect()
-        print(f"Prisma disconnected Successfully")

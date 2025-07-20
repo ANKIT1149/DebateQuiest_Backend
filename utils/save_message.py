@@ -3,7 +3,8 @@ from prisma import Prisma
 async def save_message(session_id: str, role: str, content: str):
     try:
         prisma = Prisma()
-        await prisma.connect()
+        if not prisma.is_connected:
+            await prisma.connect()
 
         await prisma.message.create(
             data={
@@ -15,5 +16,3 @@ async def save_message(session_id: str, role: str, content: str):
     except Exception as e:
         print(f"User Message stored")
         return
-    finally:
-        await prisma.disconnect()

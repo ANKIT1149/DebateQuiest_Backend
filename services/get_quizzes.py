@@ -4,7 +4,8 @@ from models.GetQuizesModel import GetQuizes
 async def get_quizzes(request: GetQuizes):
     try:
         prisma = Prisma()
-        await prisma.connect()
+        if not prisma.is_connected:
+            await prisma.connect()
 
         print(f"Prisma connected SuccessFully")
 
@@ -37,5 +38,3 @@ async def get_quizzes(request: GetQuizes):
     except Exception as error:
         print(f"Error retrieving quizzes: {error}")
         return {"message": f"Failed to retrieve quizzes: {error}", "status": 500}
-    finally:
-        await prisma.disconnect()
