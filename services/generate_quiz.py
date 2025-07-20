@@ -25,7 +25,7 @@ async def openai_client(model: PromptGenerateModel):
            - Provide 4 multiple-choice options (label as A, B, C, D).
            - Specify the correct answer (e.g., "A").
            - Include a brief explanation.
-           - Set level as "Expert".
+           - Set level as {model.level}.
            -Generate a quizId same for all question and ensure quizId is in form of uuid not normal
            -Also add the grade, remember grade value is {model.grade} exact same that you recieve not any change
            Return the output as a JSON array of objects with fields: title, question, options, correct_answer, explanation, level, grade, quizId.

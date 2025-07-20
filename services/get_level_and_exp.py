@@ -14,7 +14,8 @@ async def get_level_and_exp(request: UserIdModel):
             return {"message": "User not exsist", "status": 403}
 
         find_progress_report = await prisma.user_progress.find_first(
-            where={"userId": request.userId}
+            where={"userId": request.userId},
+            order={"updated_at": "desc"}
         )
 
         return {
